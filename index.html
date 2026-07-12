@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>원격점장 — 사장님이 안 계셔도, 매장은 응답합니다</title>
+<meta name="description" content="무인매장의 문의·신고·야간 민원을 카카오톡에서 24시간 대신 받는 원격점장. 지금 30일 무료 파일럿 매장을 모집합니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#161D38;      /* 밤하늘 */
+    --night-deep:#10152A; /* 짙은 밴드 */
+    --lamp:#FFC640;       /* 불빛 노랑 */
+    --cream:#F5F1E6;      /* 밝은 밴드·본문 */
+    --slate:#9AA3C7;      /* 보조 텍스트 */
+    --ink:#1A2342;        /* 밝은 밴드 위 글자 */
+    --serif:'Noto Serif KR',serif;
+    --sans:'Noto Sans KR',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--night);color:var(--cream);font-family:var(--sans);line-height:1.7;font-size:17px}
+  .wrap{max-width:860px;margin:0 auto;padding:0 24px}
+  section{padding:72px 0}
+  .eyebrow{font-size:13px;font-weight:500;letter-spacing:.22em;color:var(--lamp);text-transform:uppercase}
+  h1,h2{font-family:var(--serif);font-weight:900;line-height:1.35}
+  h1{font-size:clamp(30px,6vw,46px);margin:14px 0 18px}
+  h2{font-size:clamp(23px,4vw,30px);margin-bottom:28px}
+  .sub{color:var(--slate);max-width:560px}
+  a{color:inherit}
+  .btn{display:inline-block;padding:15px 26px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px}
+  .btn-lamp{background:var(--lamp);color:var(--ink)}
+  .btn-lamp:hover{filter:brightness(1.06)}
+  .btn-ghost{border:1.5px solid rgba(245,241,230,.35);color:var(--cream);margin-left:10px}
+  .btn-ghost:hover{border-color:var(--lamp);color:var(--lamp)}
+  .btn:focus-visible{outline:3px solid var(--lamp);outline-offset:3px}
+
+  /* ── 히어로 ── */
+  .hero{padding:84px 0 76px}
+  .hero-grid{display:grid;grid-template-columns:1fr 260px;gap:36px;align-items:center}
+  .store-svg{width:100%;max-width:260px;display:block;margin:0 auto}
+  @keyframes dots{0%,100%{opacity:.25}50%{opacity:1}}
+  .dot{animation:dots 1.6s infinite}
+  .dot:nth-child(2){animation-delay:.25s}.dot:nth-child(3){animation-delay:.5s}
+  @keyframes glow{0%,100%{opacity:.55}50%{opacity:1}}
+  .win{animation:glow 4s ease-in-out infinite}
+  @media (prefers-reduced-motion:reduce){.dot,.win{animation:none}}
+
+  /* ── 벽 쪽지 ── */
+  .note-band{background:var(--night-deep)}
+  .note{background:var(--cream);color:var(--ink);max-width:560px;margin:0 auto;padding:34px 30px 30px;border-radius:4px;transform:rotate(-1.2deg);box-shadow:0 18px 40px rgba(0,0,0,.35);position:relative}
+  .note::before{content:"";position:absolute;top:-14px;left:50%;transform:translateX(-50%) rotate(1.5deg);width:110px;height:28px;background:rgba(255,198,64,.75);border-radius:2px}
+  .note .big{font-family:var(--serif);font-weight:900;font-size:clamp(20px,3.6vw,26px);line-height:1.5}
+  .note .tail{margin-top:14px;color:#4a5478;font-size:15.5px}
+
+  /* ── 3단계 ── */
+  .steps{display:grid;gap:16px}
+  .step{display:grid;grid-template-columns:56px 1fr;gap:18px;background:rgba(245,241,230,.045);border:1px solid rgba(245,241,230,.09);border-radius:14px;padding:22px}
+  .step b{display:block;font-size:17px;margin-bottom:4px}
+  .step p{color:var(--slate);font-size:15.5px}
+  .num{font-family:var(--serif);font-weight:900;font-size:30px;color:var(--lamp);line-height:1.1}
+
+  /* ── 유형 칩 ── */
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .chip{border:1px solid rgba(255,198,64,.4);color:var(--cream);border-radius:999px;padding:9px 16px;font-size:14.5px}
+
+  /* ── 파일럿 박스 ── */
+  .pilot{border:2px solid var(--lamp);border-radius:18px;padding:38px 32px;background:rgba(255,198,64,.05)}
+  .pilot ul{list-style:none;margin:18px 0 26px}
+  .pilot li{padding-left:26px;position:relative;margin-bottom:10px}
+  .pilot li::before{content:"✓";position:absolute;left:0;color:var(--lamp);font-weight:700}
+
+  /* ── 안 하는 것 ── */
+  .no-band{background:var(--cream);color:var(--ink)}
+  .no-band .eyebrow{color:#B07A00}
+  .no-band .sub{color:#4a5478}
+  .no-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .no-card{background:#fff;border:1px solid #E5DFCE;border-radius:14px;padding:24px 22px}
+  .no-card b{display:block;margin-bottom:6px;font-size:16px}
+  .no-card p{font-size:14.5px;color:#4a5478}
+
+  footer{padding:44px 0 60px;color:var(--slate);font-size:14px;border-top:1px solid rgba(245,241,230,.09)}
+  footer a{color:var(--lamp);text-decoration:none}
+
+  @media (max-width:680px){
+    .hero-grid{grid-template-columns:1fr}
+    .store-svg{max-width:200px;order:-1}
+    .btn-ghost{margin-left:0;margin-top:10px}
+    .no-grid{grid-template-columns:1fr}
+    section{padding:56px 0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ 히어로 ═══ -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">무인매장 24시간 원격 응대</span>
+      <h1>사장님이 안 계셔도,<br>매장은 응답합니다</h1>
+      <p class="sub">문의·신고·야간 민원을 카카오톡에서 원격점장이 대신 받습니다. 긴급한 일만 사장님 폰을 울리고, 나머지는 아침 브리핑 한 장으로 정리해 드립니다.</p>
+      <p style="margin-top:30px">
+        <!-- TODO: 아래 href를 카카오톡 채널 주소로 교체 -->
+        <a class="btn btn-lamp" href="#pilot">30일 무료 파일럿 신청</a>
+        <!-- TODO: 아래 href를 60초 시연 영상 주소로 교체 -->
+        <a class="btn btn-ghost" href="#">60초 영상 보기</a>
+      </p>
+    </div>
+    <svg class="store-svg" viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="말풍선으로 응답하는 무인매장 그림">
+      <path d="M36 34a13 13 0 1 0 14 20 16 16 0 1 1-14-20z" fill="#FFC640"/>
+      <g fill="#F5F1E6" opacity=".8"><circle cx="26" cy="96" r="2.6"/><circle cx="206" cy="120" r="2.2"/><circle cx="84" cy="26" r="2"/></g>
+      <rect x="46" y="196" width="150" height="7" rx="3.5" fill="#3A4468"/>
+      <rect x="58" y="112" width="126" height="86" rx="10" fill="#F5F1E6"/>
+      <rect x="50" y="88" width="142" height="26" rx="7" fill="#FFC640"/>
+      <path d="M50 112a17.7 17.7 0 0 0 35.4 0zM85.4 112a17.7 17.7 0 0 0 35.4 0zM120.8 112a17.7 17.7 0 0 0 35.4 0zM156.2 112a17.7 17.7 0 0 0 35.4 0z" fill="#FFC640" transform="translate(0 0)"/>
+      <rect x="76" y="138" width="34" height="60" rx="6" fill="#161D38"/>
+      <circle cx="102" cy="170" r="2.6" fill="#F5F1E6"/>
+      <rect class="win" x="126" y="138" width="44" height="38" rx="6" fill="#FFC640"/>
+      <rect x="145" y="138" width="4" height="38" fill="#F5F1E6"/>
+      <rect x="126" y="155" width="44" height="4" fill="#F5F1E6"/>
+      <g>
+        <rect x="138" y="34" width="86" height="54" rx="24" fill="#fff"/>
+        <path d="M158 82 L142 104 L176 88 Z" fill="#fff"/>
+        <circle class="dot" cx="162" cy="61" r="5.5" fill="#161D38"/>
+        <circle class="dot" cx="181" cy="61" r="5.5" fill="#161D38"/>
+        <circle class="dot" cx="200" cy="61" r="5.5" fill="#161D38"/>
+      </g>
+    </svg>
+  </div>
+</header>
+
+<!-- ═══ 벽 쪽지: 발품 통계 ═══ -->
+<section class="note-band">
+  <div class="wrap">
+    <div class="note">
+      <p class="big">직접 돌아본 무인매장 10곳 중 9곳 —<br>키오스크 앞에는 사장님 <u>개인번호</u>가 붙어 있었습니다.</p>
+      <p class="tail">번호가 벽에 붙어 있는 한, 사장님은 24시간 당직입니다.<br>그 당직을 원격점장이 대신 섭니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 작동 방식 ═══ -->
+<section>
+  <div class="wrap">
+    <span class="eyebrow">작동 방식</span>
+    <h2>스티커 한 장으로 시작합니다</h2>
+    <div class="steps">
+      <div class="step"><span class="num">1</span><div><b>매장에 QR 스티커 한 장</b><p>손님과 배달기사님은 QR을 찍고 카카오톡으로 바로 문의합니다. 앱 설치도, 회원가입도 없습니다.</p></div></div>
+      <div class="step"><span class="num">2</span><div><b>문의와 신고는 원격점장이 24시간 접수</b><p>이용 방법, 픽업 위치, 시설 이상, 결제 문의 — 새벽에도 즉시 답하고, 사진과 함께 접수합니다.</p></div></div>
+      <div class="step"><span class="num">3</span><div><b>긴급만 즉시 알림, 나머지는 아침 브리핑 한 장</b><p>사장님 폰은 정말 급한 일에만 울립니다. 어제 무슨 일이 있었는지는 아침 브리핑으로 정리해 드립니다.</p></div></div>
+    </div>
+    <div class="chips">
+      <span class="chip">이용·픽업 문의 즉답</span>
+      <span class="chip">시설·청결·유통기한 신고 접수</span>
+      <span class="chip">결제·환불 요청 기록 접수</span>
+      <span class="chip">긴급 상황 즉시 알림</span>
+      <span class="chip">매장 규칙 정중·단호 안내</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 파일럿 모집 ═══ -->
+<section id="pilot" class="note-band">
+  <div class="wrap">
+    <div class="pilot">
+      <span class="eyebrow">파일럿 모집</span>
+      <h2>지금, 파일럿 매장을 모집합니다</h2>
+      <ul>
+        <li><b>30일 무료</b> — 비용 없이 전 기능을 사용합니다</li>
+        <li><b>세팅 전부 대행</b> — 매장 정보 등록부터 QR 스티커까지 해드립니다</li>
+        <li><b>모든 대화 열람</b> — 손님과의 대화 전체를 사장님이 보실 수 있습니다</li>
+        <li><b>언제든 종료</b> — 하루 전 통보로 그만두실 수 있습니다</li>
+        <li>부탁드리는 건 <b>주 1회 10분 피드백</b>뿐입니다</li>
+      </ul>
+      <!-- TODO: 아래 href를 카카오톡 채널 주소로 교체 -->
+      <a class="btn btn-lamp" href="#">카카오톡으로 파일럿 신청하기</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 안 하는 것 ═══ -->
+<section class="no-band">
+  <div class="wrap">
+    <span class="eyebrow">저희가 하지 않는 것</span>
+    <h2>못 하는 것을 먼저 말씀드립니다</h2>
+    <p class="sub" style="margin-bottom:26px">경계가 분명해야 믿고 맡기실 수 있다고 생각합니다.</p>
+    <div class="no-grid">
+      <div class="no-card"><b>CCTV·영상은 다루지 않습니다</b><p>영상 확인과 판독은 보안업체와 경찰의 영역입니다. 원격점장은 대화와 기록을 맡습니다.</p></div>
+      <div class="no-card"><b>환불·보상을 임의로 약속하지 않습니다</b><p>봇의 권한은 접수와 안내까지입니다. 처리 결정은 언제나 사장님의 몫입니다.</p></div>
+      <div class="no-card"><b>비공식 프로그램을 쓰지 않습니다</b><p>카카오가 공식 제공하는 기능만 사용합니다. 사장님 채널이 위험해질 일을 만들지 않습니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <!-- TODO: 아래 href를 카카오톡 채널 주소로 교체 -->
+    ⓒ 2026 원격점장 · 무인매장 24시간 원격 응대 · 문의: <a href="#">카카오톡 채널</a>
+  </div>
+</footer>
+
+</body>
+</html>
