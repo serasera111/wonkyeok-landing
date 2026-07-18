@@ -30,12 +30,21 @@
   h2{font-size:clamp(23px,4vw,30px);margin-bottom:28px}
   .sub{color:var(--slate);max-width:560px}
   a{color:inherit}
-  .btn{display:inline-block;padding:15px 26px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px}
+  .btn{display:inline-block;padding:15px 26px;border-radius:12px;font-weight:700;text-decoration:none;font-size:16px;
+    background:transparent;border:0;cursor:pointer;font-family:inherit}
   .btn-lamp{background:var(--lamp);color:var(--ink)}
   .btn-lamp:hover{filter:brightness(1.06)}
   .btn-ghost{border:1.5px solid rgba(245,241,230,.35);color:var(--cream);margin-left:10px}
   .btn-ghost:hover{border-color:var(--lamp);color:var(--lamp)}
   .btn:focus-visible{outline:3px solid var(--lamp);outline-offset:3px}
+
+  /* ── 준비중 안내 토스트 ── */
+  .toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);
+    background:var(--night-deep);color:var(--cream);border:1px solid var(--lamp);
+    padding:14px 22px;border-radius:10px;font-size:15px;font-weight:500;
+    box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;
+    transition:opacity .25s ease,transform .25s ease;z-index:100}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* ── 히어로 ── */
   .hero{padding:84px 0 76px}
@@ -105,8 +114,8 @@
       <p style="margin-top:30px">
         <!-- TODO: 아래 href를 카카오톡 채널 주소로 교체 -->
         <a class="btn btn-lamp" href="#pilot">무료 파일럿 신청</a>
-        <!-- TODO: 아래 href를 60초 시연 영상 주소로 교체 -->
-        <a class="btn btn-ghost" href="#">60초 영상 보기</a>
+        <!-- TODO: 영상 준비되면 아래를 href="영상 주소"인 <a> 태그로 교체 -->
+        <button class="btn btn-ghost" type="button" onclick="showComingSoon()">60초 영상 보기</button>
       </p>
     </div>
     <svg class="store-svg" viewBox="0 0 240 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="말풍선으로 응답하는 무인매장 그림">
@@ -203,5 +212,14 @@
   </div>
 </footer>
 
+<div class="toast" id="toast" role="status" aria-live="polite">60초 영상은 준비 중입니다 🎬</div>
+<script>
+function showComingSoon(){
+  var t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+</script>
 </body>
 </html>
