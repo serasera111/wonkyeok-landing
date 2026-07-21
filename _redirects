@@ -1,0 +1,2 @@
+# 파일럿 신청 버튼: 같은 도메인 하위 경로로 노출 후 실제 서버로 리다이렉트
+/apply  https://port-0-master12-mrotsb1x433f8f94.sel3.cloudtype.app/apply  302
